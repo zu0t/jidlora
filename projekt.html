@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JIDLORA | Autonomní Nutriční Jednotka</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --primary: #ff2a6d;
+            --secondary: #05d9e8;
+            --accent: #01ffc3;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* ----- ÚVODNÍ SKENER (OVERLAY) ----- */
+        #scanner-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease, visibility 1s;
+        }
+
+        /* High-tech zaměřovač */
+        .fingerprint-box {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border: 2px solid var(--glass-border);
+            border-radius: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            background: var(--glass-bg);
+            box-shadow: 0 0 40px rgba(5, 217, 232, 0.1);
+            transition: 0.3s;
+        }
+
+        .fingerprint-box::before, .fingerprint-box::after {
+            content: ''; position: absolute; width: 30px; height: 30px; border-color: var(--secondary); border-style: solid;
+        }
+        .fingerprint-box::before { top: 10px; left: 10px; border-width: 3px 0 0 3px; }
+        .fingerprint-box::after { bottom: 10px; right: 10px; border-width: 0 3px 3px 0; }
+
+        .fingerprint-icon {
+            font-size: 6rem;
+            opacity: 0.5;
+            transition: 0.3s;
+        }
+
+        /* Matrix mřížka, která se ukáže při skenu */
+        .scan-grid {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(5, 217, 232, 0.15) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(5, 217, 232, 0.15) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: var(--secondary);
+            box-shadow: 0 0 20px var(--secondary);
+            display: none;
+        }
+
+        /* Různé fáze animace skenování */
+        @keyframes scanNormal {
+            0% { top: 0; height: 4px; background: var(--secondary); box-shadow: 0 0 20px var(--secondary); }
+            100% { top: 100%; height: 4px; background: var(--secondary); box-shadow: 0 0 20px var(--secondary); }
+        }
+
+        @keyframes scanCrazy {
+            0% { top: -10%; height: 15px; background: var(--primary); box-shadow: 0 0 40px var(--primary); opacity: 0.8; }
+            50% { background: #fff; box-shadow: 0 0 50px #fff; }
+            100% { top: 110%; height: 2px; background: var(--secondary); box-shadow: 0 0 20px var(--secondary); opacity: 1; }
+        }
+
+        /* Glitch efekt pro fázi paniky */
+        @keyframes glitch {
+            0% { transform: translate(0) scale(1); filter: hue-rotate(0deg); }
+            20% { transform: translate(-4px, 4px) scale(1.1); filter: hue-rotate(90deg); }
+            40% { transform: translate(-4px, -4px) scale(1.1); filter: hue-rotate(180deg); }
+            60% { transform: translate(4px, 4px) scale(1.1); filter: hue-rotate(270deg); }
+            80% { transform: translate(4px, -4px) scale(1.1); filter: hue-rotate(360deg); }
+            100% { transform: translate(0) scale(1); filter: hue-rotate(0deg); }
+        }
+        .glitch-active { animation: glitch 0.15s infinite; color: var(--primary); opacity: 1; }
+
+        #scan-btn {
+            background: transparent; color: var(--secondary); border: 2px solid var(--secondary);
+            padding: 15px 40px; font-size: 1.2rem; border-radius: 50px; cursor: pointer;
+            text-transform: uppercase; font-weight: bold; letter-spacing: 2px; transition: 0.3s;
+        }
+
+        #scan-btn:hover { background: var(--secondary); color: #000; box-shadow: 0 0 30px var(--secondary); }
+
+        #scan-text {
+            margin-top: 15px; font-size: 1.5rem; color: var(--accent);
+            text-align: center; min-height: 30px; font-weight: bold; letter-spacing: 1px;
+        }
+
+        /* Terminál výstup */
+        #terminal-output {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--secondary); font-size: 0.95rem;
+            margin-top: 15px; width: 350px; height: 120px;
+            text-align: left; opacity: 0; transition: opacity 0.5s;
+            background: rgba(0,0,0,0.5); padding: 10px; border-radius: 10px;
+            border-left: 3px solid var(--secondary); overflow: hidden;
+        }
+        .terminal-line { margin-bottom: 5px; }
+        .text-red { color: var(--primary); font-weight: bold; text-shadow: 0 0 5px var(--primary); }
+        .text-green { color: var(--accent); font-weight: bold; text-shadow: 0 0 5px var(--accent); }
+
+        /* ----- HLAVNÍ WEB (Stejný jako předtím, pro zkrácení nechávám kostru, kopíruj celé) ----- */
+        #main-site { opacity: 0; visibility: hidden; transition: opacity 1.5s ease; }
+        .bg-glow { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(255,42,109,0.15) 0%, rgba(0,0,0,0) 70%); top: -100px; right: -100px; z-index: -1; border-radius: 50%; filter: blur(50px); }
+        .bg-glow-2 { position: absolute; width: 500px; height: 500px; background: radial-gradient(circle, rgba(5,217,232,0.1) 0%, rgba(0,0,0,0) 70%); bottom: 10%; left: -100px; z-index: -1; border-radius: 50%; filter: blur(50px); }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 2rem 5%; backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border); }
+        .logo { font-size: 2rem; font-weight: 900; letter-spacing: 5px; background: linear-gradient(90deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero { min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 20px; }
+        .hero h1 { font-size: 6rem; margin-bottom: 10px; background: linear-gradient(to right, #fff, #888); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0px 10px 30px rgba(0,0,0,0.5); }
+        .hero p { font-size: 1.5rem; color: #aaa; max-width: 600px; margin-bottom: 40px; }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; padding: 5rem 10%; }
+        .glass-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px; padding: 2.5rem; backdrop-filter: blur(15px); transition: transform 0.3s, box-shadow 0.3s; }
+        .glass-card:hover { transform: translateY(-10px); border-color: var(--secondary); box-shadow: 0 10px 30px rgba(5, 217, 232, 0.1); }
+        .glass-card h3 { color: var(--secondary); font-size: 1.8rem; margin-bottom: 1rem; }
+        .glass-card p { color: #ccc; line-height: 1.6; }
+        .tech-tag { display: inline-block; background: rgba(1, 255, 195, 0.1); color: var(--accent); padding: 5px 15px; border-radius: 50px; font-size: 0.8rem; margin-top: 15px; margin-right: 5px; border: 1px solid rgba(1, 255, 195, 0.3); }
+        .demo-section { text-align: center; padding: 5rem 20px; border-top: 1px solid var(--glass-border); }
+        .demo-section h2 { font-size: 3rem; margin-bottom: 2rem; }
+        .pulse-btn { background: linear-gradient(45deg, var(--primary), #b31046); color: white; border: none; padding: 20px 50px; font-size: 1.5rem; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 0 20px rgba(255, 42, 109, 0.5); transition: 0.3s; }
+        .pulse-btn:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(255, 42, 109, 0.8); }
+        .candy { position: fixed; border-radius: 50%; z-index: 999; box-shadow: inset -3px -3px 6px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.5); pointer-events: none; }
+        footer { text-align: center; padding: 2rem; color: #555; border-top: 1px solid var(--glass-border); }
+        @keyframes pulseAlert { 0% { text-shadow: 0 0 10px var(--primary); transform: scale(1); } 100% { text-shadow: 0 0 40px var(--primary), 0 0 80px red; transform: scale(1.05); } }
+    </style>
+</head>
+<body>
+
+    <audio id="sound-scan" src="sken.mp3" preload="auto"></audio>
+    <audio id="sound-success" src="success.mp3" preload="auto"></audio>
+    <audio id="bg-music" src="hudba.mp3" loop preload="auto"></audio>
+
+    <div id="scanner-overlay">
+        <div class="fingerprint-box" id="fp-box">
+            <div class="scan-grid" id="scan-grid"></div>
+            <div class="fingerprint-icon" id="fp-icon">🧬</div>
+            <div class="scan-line" id="scan-line"></div>
+        </div>
+        <button id="scan-btn" onclick="startScanner()">Zahájit biometrický test</button>
+        <div id="scan-text"></div>
+        
+        <div id="terminal-output"></div>
+    </div>
+
+    <div id="main-site">
+        <div class="bg-glow"></div>
+        <div class="bg-glow-2"></div>
+        <nav class="navbar"><div class="logo">JIDLORA</div><div>VERZE 1.0 // PROJEKT</div></nav>
+        <section class="hero">
+            <h1>JIDLORA</h1>
+            <p>Zcela autonomní, terénní nutriční jednotka. Navržena pro eliminaci kritického nedostatku cukru během vyučovacích hodin.</p>
+        </section>
+        <section class="features">
+            <div class="glass-card"><h3>🧠 Centrální Mozek</h3><p>O chod se stará mikrokontrolér <strong>ESP32</strong> s plně bezdrátovým ovládáním přes Wi-Fi a Bluetooth.</p><span class="tech-tag">ESP32 DevKit V1</span></div>
+            <div class="glass-card"><h3>⚙️ Pohon & Šasi</h3><p>Platforma postavena pro uvezní minimálně 1kg nákladu. Využívá <strong>4WD náhon</strong> pro maximální trakci v náročném školním terénu.</p><span class="tech-tag">4x 25GA-370</span><span class="tech-tag">L298N</span></div>
+            <div class="glass-card"><h3>🍬 Přesný Dispenser</h3><p>Mechanismus na míru z 3D tisku. O výdej se stará přesný krokový motor, zaručující nulovou ztrátovost bonbónů.</p><span class="tech-tag">Krokový motor 28BYJ-48</span></div>
+        </section>
+        <section class="demo-section">
+            <h2>Simulace Systému Výdeje</h2>
+            <p style="color: #aaa; margin-bottom: 2rem;">Testovací rozhraní pro ověření fyziky padajících těles s vysokým obsahem sacharidů.</p>
+            <button class="pulse-btn" id="candyBtn" onclick="dispenseCandy()">VYDAT ENERGII</button>
+        </section>
+        <footer>Vytvořeno pro záchranu životů (a jedničku z projektu) © 2024 JIDLORA Team.</footer>
+    </div>
+
+    <script>
+        // --- LOGIKA 9-SEKUNDOVÉHO SKENERU ---
+        async function startScanner() {
+            const btn = document.getElementById('scan-btn');
+            const scanLine = document.getElementById('scan-line');
+            const scanText = document.getElementById('scan-text');
+            const scanGrid = document.getElementById('scan-grid');
+            const fpIcon = document.getElementById('fp-icon');
+            const fpBox = document.getElementById('fp-box');
+            const terminal = document.getElementById('terminal-output');
+            
+            const scanSound = document.getElementById('sound-scan');
+            const successSound = document.getElementById('sound-success');
+            const bgMusic = document.getElementById('bg-music');
+
+            // Funkce pro přidávání řádků do terminálu
+            function log(text) {
+                terminal.innerHTML += `<div class="terminal-line">${text}</div>`;
+                terminal.scrollTop = terminal.scrollHeight; // Auto-scroll dolů
+            }
+
+            // START (Čas: 0s)
+            btn.style.display = 'none';
+            scanGrid.style.opacity = '1';
+            scanLine.style.display = 'block';
+            scanLine.style.animation = 'scanNormal 1.5s infinite alternate linear';
+            terminal.style.opacity = '1';
+            
+            try { scanSound.play(); } catch(e) {}
+
+            scanText.innerText = "INICIALIZACE...";
+            log("> Navazování spojení se subjektem...");
+
+            // FÁZE 1: Standardní sken (Čas: 1.5s)
+            setTimeout(() => {
+                scanText.innerText = "BIOMETRICKÁ ANALÝZA";
+                log("> Sken otisku prstu... <span class='text-green'>OK</span>");
+                log("> Měření tepové frekvence... 110 BPM");
+            }, 1500);
+
+            // FÁZE 2: Crazy / Glitch / Hloubkový sken (Čas: 3.5s)
+            setTimeout(() => {
+                scanText.innerText = "HLOUBKOVÝ SKEN KRVE";
+                scanText.style.color = "var(--primary)";
+                fpIcon.classList.add('glitch-active'); // Zapne šílené klepání ikony
+                scanLine.style.animation = 'scanCrazy 0.2s infinite alternate linear'; // Rychlý laser
+                fpBox.style.borderColor = "var(--primary)";
+                fpBox.style.boxShadow = "0 0 50px rgba(255, 42, 109, 0.4)";
+                terminal.style.borderLeftColor = "var(--primary)";
+                
+                log("> Přistupuji k nervové soustavě...");
+                log("> Analyzuji trávicí trakt...");
+            }, 3500);
+
+            // FÁZE 3: Zjištění problému / Panika (Čas: 5.5s)
+            setTimeout(() => {
+                scanText.innerText = "!! KRITICKÝ STAV !!";
+                scanText.style.animation = "pulseAlert 0.4s infinite alternate";
+                
+                log("> Hladina glukózy: <span class='text-red'>0.01% (SMRTELNÁ)</span>");
+                log("> <span class='text-red'>VAROVÁNÍ: Subjekt hrozí kolapsem z nudy!</span>");
+            }, 5500);
+
+            // FÁZE 4: Záchrana / Autorizace (Čas: 7.5s)
+            setTimeout(() => {
+                fpIcon.classList.remove('glitch-active');
+                scanLine.style.animation = 'scanNormal 0.5s forwards linear'; // Dojede dolů a zastaví
+                
+                scanText.style.animation = "none";
+                scanText.style.color = "var(--accent)";
+                scanText.innerText = "HLADOVÝ UŽIVATEL POTVRZEN";
+                
+                fpBox.style.borderColor = "var(--accent)";
+                fpBox.style.boxShadow = "0 0 40px rgba(1, 255, 195, 0.3)";
+                fpIcon.style.color = "var(--accent)";
+                terminal.style.borderLeftColor = "var(--accent)";
+                
+                log("> Spouštím záchranný protokol JIDLORA...");
+                log("> <span class='text-green'>PŘÍSTUP POVOLEN.</span>");
+
+                try { scanSound.pause(); successSound.play(); } catch(e) {}
+            }, 7500);
+
+            // ZÁVĚR: Přechod na hlavní web (Čas: 9.0s) -> 1.5s po autorizaci
+            setTimeout(() => {
+                document.getElementById('scanner-overlay').style.opacity = '0';
+                
+                setTimeout(() => {
+                    document.getElementById('scanner-overlay').style.display = 'none';
+                    document.getElementById('main-site').style.visibility = 'visible';
+                    document.getElementById('main-site').style.opacity = '1';
+                    try { bgMusic.play(); } catch(e) {}
+                }, 1000); // čeká na dokreslení fade-outu
+            }, 9000); // TADY JE TĚCH PŘESNÝCH 9 SEKUND
+        }
+
+        // --- FYZIKA BONBÓNŮ (DISPENSER DEMO) ---
+        const colors = ['#e60000', '#ff8c00', '#ffee00', '#00c800', '#0000ff', '#800080'];
+        let candies = [];
+
+        function dispenseCandy() {
+            const btn = document.getElementById('candyBtn');
+            btn.innerText = "DÁVKUJI...";
+            setTimeout(() => btn.innerText = "VYDAT ENERGII", 1000);
+            for(let i = 0; i < 50; i++) { setTimeout(createCandy, i * 15); }
+        }
+
+        function createCandy() {
+            const candy = document.createElement('div');
+            candy.className = 'candy';
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const size = Math.random() * 15 + 15; 
+            candy.style.backgroundColor = color;
+            candy.style.width = size + 'px'; candy.style.height = size + 'px';
+            
+            const phys = {
+                element: candy,
+                x: window.innerWidth / 2 + (Math.random() * 100 - 50),
+                y: window.scrollY - 50,
+                vx: Math.random() * 16 - 8,
+                vy: Math.random() * 5,
+                gravity: 0.6,
+                bounce: 0.5 + Math.random() * 0.3,
+                size: size
+            };
+            candy.style.left = phys.x + 'px'; candy.style.top = phys.y + 'px';
+            document.body.appendChild(candy);
+            candies.push(phys);
+        }
+
+        function updatePhysics() {
+            for (let i = 0; i < candies.length; i++) {
+                let p = candies[i];
+                p.vy += p.gravity; p.x += p.vx; p.y += p.vy;
+                const ground = window.innerHeight + window.scrollY - p.size;
+                if (p.y > ground) { p.y = ground; p.vy *= -p.bounce; p.vx *= 0.8; }
+                if (p.x < 0) { p.x = 0; p.vx *= -1; } 
+                else if (p.x > window.innerWidth - p.size) { p.x = window.innerWidth - p.size; p.vx *= -1; }
+                p.element.style.left = p.x + 'px'; p.element.style.top = p.y + 'px';
+            }
+            candies = candies.filter(p => {
+                if(Math.abs(p.vy) < 0.5 && p.y >= window.innerHeight + window.scrollY - p.size - 2) {
+                    setTimeout(() => { if(p.element.parentNode) p.element.remove(); }, 3000);
+                    return false;
+                } return true;
+            });
+            requestAnimationFrame(updatePhysics);
+        }
+        updatePhysics();
+    </script>
+</body>
+</html>
