@@ -2,164 +2,144 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JIDLORA | Autonomní Nutriční Jednotka</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>JIDLORA | Web3 Sugar Protocol</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-dark: #050505;
-            --primary: #ff2a6d;
-            --secondary: #05d9e8;
-            --accent: #01ffc3;
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.1);
+        :root { 
+            --bg-dark: #0a0a0c; --primary: #ff2a6d; --secondary: #05d9e8; 
+            --accent: #01ffc3; --gold: #ffd700; --glass-bg: rgba(20, 20, 25, 0.7); 
+            --glass-border: rgba(255, 255, 255, 0.1); 
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Outfit', sans-serif;
+        /* ─── CUSTOM KRYPTO KURZOR ─── */
+        * { 
+            box-sizing: border-box; margin: 0; padding: 0; 
+            font-family: 'Outfit', sans-serif; 
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='48' viewport='0 0 100 100' style='font-size:32px;'><text y='32'>💎</text></svg>"), auto;
+        }
+        
+        button, a, [onclick] {
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='48' viewport='0 0 100 100' style='font-size:32px;'><text y='32'>🚀</text></svg>"), pointer;
         }
 
-        body {
-            background-color: var(--bg-dark);
-            color: white;
-            overflow-x: hidden;
+        body { 
+            background-color: var(--bg-dark); color: white; 
+            overflow-x: hidden; width: 100vw; min-height: 100vh;
         }
+
+        /* ─── INSANE BACKGROUND ANIMACE ─── */
+        @keyframes epilepticRainbow {
+            0% { background-position: 0% 50%; filter: hue-rotate(0deg); }
+            50% { background-position: 100% 50%; filter: hue-rotate(180deg); }
+            100% { background-position: 0% 50%; filter: hue-rotate(360deg); }
+        }
+        .insane-rainbow { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000); background-size: 1000% 1000%; animation: epilepticRainbow 4s linear infinite; opacity: 0.12; z-index: -3; pointer-events: none;}
+        
+        @keyframes bounceX { 0% { left: 0; transform: translateX(0); } 100% { left: calc(100vw - 300px); transform: translateX(0); } }
+        @keyframes bounceY { 0% { top: 0; transform: translateY(0); } 100% { top: calc(100vh - 150px); transform: translateY(0); } }
+        @keyframes colorChange { 0% { color: #fff; } 25% { color: var(--secondary); } 50% { color: var(--primary); } 75% { color: var(--gold); } 100% { color: #fff; } }
+        .bouncing-hodl { position: fixed; font-family: "Comic Sans MS", "Comic Sans", cursive; font-size: 6rem; font-weight: 900; text-transform: uppercase; white-space: nowrap; pointer-events: none; animation: bounceX 5s linear infinite alternate, bounceY 4.3s linear infinite alternate, colorChange 2s linear infinite; z-index: -2; text-shadow: 0 0 30px rgba(255, 255, 255, 0.3); opacity: 0.3;}
+        @media (max-width: 768px) { .bouncing-hodl { font-size: 3rem; animation: bounceX 3s linear infinite alternate, bounceY 2.3s linear infinite alternate, colorChange 2s linear infinite;} }
+
+        @keyframes flyUp { 0% { top: 120vh; } 100% { top: -20vh; } }
+        @keyframes spinInsane { 0% { transform: rotate3d(1, 1, 1, 0deg) scale(1); } 50% { transform: rotate3d(1, 2, -1, 180deg) scale(1.5); } 100% { transform: rotate3d(-1, 1, 1, 360deg) scale(1); } }
+        .flying-meme { position: fixed; font-size: 4rem; z-index: -1; opacity: 0.2; animation: flyUp var(--speed) linear infinite; left: var(--pos); animation-delay: var(--delay); pointer-events: none; }
+        .flying-meme::after { content: attr(data-emoji); display: block; animation: spinInsane var(--spin-speed) linear infinite; }
+        @media (max-width: 768px) { .flying-meme { font-size: 2rem; } }
+
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        @keyframes pulseGlow { 0% { box-shadow: 0 0 15px var(--primary); } 50% { box-shadow: 0 0 40px var(--secondary), inset 0 0 15px var(--secondary); } 100% { box-shadow: 0 0 15px var(--primary); } }
+        @keyframes glitch { 0% { transform: translate(0) scale(1); filter: hue-rotate(0deg); text-shadow: 2px 2px 0 red, -2px -2px 0 blue;} 20% { transform: translate(-2px, 2px); filter: hue-rotate(90deg); text-shadow: -2px 2px 0 red, 2px -2px 0 blue;} 100% { transform: translate(0) scale(1.02); filter: hue-rotate(360deg); text-shadow: 2px -2px 0 red, -2px 2px 0 blue;} }
+
+        @keyframes spinBackground { 100% { transform: rotate(360deg) scale(1); } }
+        .stonks-bg { position: fixed; top: 50%; left: 50%; width: 200vw; height: 200vw; margin-top: -100vw; margin-left: -100vw; background: repeating-conic-gradient(from 0deg, transparent 0deg 15deg, rgba(1, 255, 195, 0.04) 15deg 30deg); animation: spinBackground 20s linear infinite; z-index: -2; pointer-events: none; }
+
+        .ticker-tape { background: var(--primary); color: white; font-weight: 900; font-size: 1rem; padding: 6px 0; overflow: hidden; white-space: nowrap; border-bottom: 2px solid var(--gold); border-top: 2px solid var(--gold); position: relative; z-index: 100; text-transform: uppercase; backdrop-filter: blur(5px);}
+        .ticker-tape div { display: inline-block; animation: marquee 15s linear infinite; }
+        .ticker-tape span { margin-right: 40px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        @media (max-width: 768px) { .ticker-tape { font-size: 0.8rem; padding: 4px 0;} }
+
+        /* NAVIGACE */
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 1rem 5%; backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); position: sticky; top: 0; z-index: 100; flex-wrap: wrap;}
+        .logo { font-size: 1.8rem; font-weight: 900; letter-spacing: 4px; background: linear-gradient(90deg, var(--gold), var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: epilepticRainbow 2s infinite; background-size: 200%; text-shadow: 0 0 15px rgba(255,255,255,0.2);}
+        .nav-links { display: flex; gap: 10px; }
+        .nav-links a { color: white; text-decoration: none; font-weight: bold; letter-spacing: 1px; transition: 0.2s; text-transform: uppercase; font-size: 0.8rem; padding: 8px 12px; border-radius: 6px; border: 1px solid transparent; background: rgba(0,0,0,0.3); white-space: nowrap;}
+        .nav-links a:hover, .nav-links a.active { border-color: var(--secondary); background: rgba(5, 217, 232, 0.2); color: var(--secondary); text-shadow: 0 0 10px var(--secondary); box-shadow: 0 0 15px rgba(5,217,232,0.4); }
+        @media (max-width: 768px) { .navbar { padding: 0.8rem 1rem; } .logo { font-size: 1.4rem; letter-spacing: 2px; } .nav-links { gap: 5px; margin-top: 8px; width: 100%; justify-content: center;} .nav-links a { font-size: 0.7rem; padding: 6px 8px;} }
 
         /* ----- ÚVODNÍ SKENER (OVERLAY) ----- */
-        #scanner-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: radial-gradient(circle at center, #111 0%, #000 100%);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 1s ease, visibility 1s;
+        #scanner-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle at center, rgba(10,10,12,0.98) 0%, #000 100%); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(15px); transition: opacity 1s ease, visibility 1s; padding: 20px;}
+        
+        .fingerprint-box { position: relative; width: 180px; height: 180px; border: 2px solid var(--glass-border); border-radius: 25px; display: flex; justify-content: center; align-items: center; overflow: hidden; margin-bottom: 1rem; background: var(--glass-bg); box-shadow: 0 0 30px rgba(5, 217, 232, 0.1); transition: 0.3s; }
+        @media (max-width: 768px) { .fingerprint-box { width: 140px; height: 140px; } }
+        
+        .fingerprint-box::before, .fingerprint-box::after { content: ''; position: absolute; width: 25px; height: 25px; border-color: var(--secondary); border-style: solid; }
+        .fingerprint-box::before { top: 8px; left: 8px; border-width: 3px 0 0 3px; }
+        .fingerprint-box::after { bottom: 8px; right: 8px; border-width: 0 3px 3px 0; }
+        .fingerprint-icon { font-size: 5rem; opacity: 0.4; transition: 0.3s; filter: drop-shadow(0 0 10px var(--secondary)); }
+        @media (max-width: 768px) { .fingerprint-icon { font-size: 4rem;} }
+        
+        .scan-grid { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(5, 217, 232, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(5, 217, 232, 0.1) 1px, transparent 1px); background-size: 15px 15px; opacity: 0; transition: opacity 0.5s; }
+        
+        /* 100% OPRAVENÁ LASEROVÁ ČÁRA */
+        .scan-line { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 4px; 
+            background: var(--secondary); box-shadow: 0 0 20px var(--secondary); 
+            opacity: 0; /* Zásadní: Používáme opacity 0 pro skrytí, žádný display: none! */
         }
-
-        /* High-tech zaměřovač */
-        .fingerprint-box {
-            position: relative;
-            width: 200px;
-            height: 200px;
-            border: 2px solid var(--glass-border);
-            border-radius: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            margin-bottom: 1rem;
-            background: var(--glass-bg);
-            box-shadow: 0 0 40px rgba(5, 217, 232, 0.1);
-            transition: 0.3s;
+        
+        @keyframes scanNormal { 
+            0% { top: 0%; height: 4px; background: var(--secondary); box-shadow: 0 0 20px var(--secondary); } 
+            100% { top: calc(100% - 4px); height: 4px; background: var(--secondary); box-shadow: 0 0 20px var(--secondary); } 
         }
-
-        .fingerprint-box::before, .fingerprint-box::after {
-            content: ''; position: absolute; width: 30px; height: 30px; border-color: var(--secondary); border-style: solid;
+        @keyframes scanCrazy { 
+            0% { top: -10%; height: 15px; background: var(--primary); box-shadow: 0 0 40px var(--primary); opacity: 0.8; } 
+            50% { background: #fff; box-shadow: 0 0 50px #fff; } 
+            100% { top: 110%; height: 2px; background: var(--secondary); box-shadow: 0 0 20px var(--secondary); opacity: 1; } 
         }
-        .fingerprint-box::before { top: 10px; left: 10px; border-width: 3px 0 0 3px; }
-        .fingerprint-box::after { bottom: 10px; right: 10px; border-width: 0 3px 3px 0; }
+        
+        #scan-btn { background: rgba(5, 217, 232, 0.1); color: var(--secondary); border: 2px solid var(--secondary); padding: 12px 30px; font-size: 1.1rem; border-radius: 50px; cursor: pointer; text-transform: uppercase; font-weight: bold; letter-spacing: 2px; transition: 0.3s; animation: pulseGlow 1.5s infinite; outline: none;}
+        #scan-btn:hover { background: var(--secondary); color: #000; box-shadow: 0 0 30px var(--secondary); transform: scale(1.03); }
+        @media (max-width: 768px) { #scan-btn { font-size: 0.9rem; padding: 10px 20px;} }
 
-        .fingerprint-icon {
-            font-size: 6rem;
-            opacity: 0.5;
-            transition: 0.3s;
-        }
+        #scan-text { margin-top: 15px; font-size: 1.3rem; color: var(--accent); text-align: center; min-height: 28px; font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 10px var(--accent); max-width: 90%;}
+        @media (max-width: 768px) { #scan-text { font-size: 1rem;} }
 
-        /* Matrix mřížka, která se ukáže při skenu */
-        .scan-grid {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(5, 217, 232, 0.15) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(5, 217, 232, 0.15) 1px, transparent 1px);
-            background-size: 20px 20px;
-            opacity: 0;
-            transition: opacity 0.5s;
-        }
+        #terminal-output { font-family: 'Share Tech Mono', monospace; color: var(--secondary); font-size: 0.85rem; margin-top: 15px; width: 320px; max-width: 95%; height: 110px; text-align: left; opacity: 0; transition: opacity 0.5s; background: rgba(0,0,0,0.8); padding: 8px; border-radius: 8px; border-left: 3px solid var(--secondary); overflow: hidden; box-shadow: inset 0 0 15px rgba(5,217,232,0.1); }
+        @media (max-width: 768px) { #terminal-output { font-size: 0.75rem; width: 280px; height: 90px;} }
+        .terminal-line { margin-bottom: 4px; }
 
-        .scan-line {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 4px;
-            background: var(--secondary);
-            box-shadow: 0 0 20px var(--secondary);
-            display: none;
-        }
+        /* VAROVÁNÍ NA SKENERU */
+        .scanner-warnings { margin-top: 30px; text-align: center; color: rgba(255,255,255,0.7); font-weight: bold;}
+        .sound-warning { font-size: 1.1rem; color: #fff; text-shadow: 0 0 10px var(--secondary);}
+        .epilepsy-warning { font-size: 0.7rem; color: #ff5555; margin-top: 8px; max-width: 300px; text-transform: uppercase;}
+        @media (max-width: 768px) { .sound-warning { font-size: 0.9rem;} .epilepsy-warning { font-size: 0.6rem;} }
 
-        /* Různé fáze animace skenování */
-        @keyframes scanNormal {
-            0% { top: 0; height: 4px; background: var(--secondary); box-shadow: 0 0 20px var(--secondary); }
-            100% { top: 100%; height: 4px; background: var(--secondary); box-shadow: 0 0 20px var(--secondary); }
-        }
+        /* ----- HLAVNÍ WEB ----- */
+        #main-site { opacity: 0; visibility: hidden; transition: opacity 1s ease; position: relative; z-index: 10; display: flex; flex-direction: column; min-height: 100vh;}
+        .hero { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 2rem 1rem;}
+        
+        .badge { display: inline-block; background: rgba(255, 215, 0, 0.9); color: #000; border: 2px solid var(--gold); padding: 4px 12px; border-radius: 50px; font-weight: 900; font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 1rem; animation: pulseGlow 0.4s infinite alternate; }
+        @media (max-width: 768px) { .badge { font-size: 0.7rem; padding: 3px 10px; margin-bottom: 0.5rem;} }
+        
+        .hero h1 { font-size: clamp(3rem, 15vw, 7rem); margin-bottom: 5px; text-transform: uppercase; background: linear-gradient(to right, #fff, #bbb); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0px 8px 25px rgba(0,0,0,0.8); font-style: italic; font-weight: 900; line-height: 1.1;}
+        
+        .hero p { font-size: clamp(0.9rem, 4vw, 1.3rem); color: #fff; max-width: 550px; margin-bottom: 30px; background: rgba(0,0,0,0.7); padding: 12px; border-radius: 8px; border: 1px dashed var(--accent); backdrop-filter: blur(5px);}
+        
+        .stats-bar { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; max-width: 100%;}
+        .stat-box { background: rgba(0,0,0,0.8); border: 2px solid var(--glass-border); padding: 10px 20px; border-radius: 12px; text-align: center; backdrop-filter: blur(10px); flex: 0 1 auto; min-width: 130px;}
+        .stat-box h4 { color: #aaa; font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px;}
+        .stat-box span { font-size: 1.2rem; font-weight: 900; color: var(--accent); text-shadow: 0 0 10px rgba(1,255,195,0.8); }
+        @media (max-width: 768px) { .stat-box { padding: 8px 15px; min-width: 110px;} .stat-box h4 { font-size: 0.6rem;} .stat-box span { font-size: 1rem;} }
 
-        @keyframes scanCrazy {
-            0% { top: -10%; height: 15px; background: var(--primary); box-shadow: 0 0 40px var(--primary); opacity: 0.8; }
-            50% { background: #fff; box-shadow: 0 0 50px #fff; }
-            100% { top: 110%; height: 2px; background: var(--secondary); box-shadow: 0 0 20px var(--secondary); opacity: 1; }
-        }
-
-        /* Glitch efekt pro fázi paniky */
-        @keyframes glitch {
-            0% { transform: translate(0) scale(1); filter: hue-rotate(0deg); }
-            20% { transform: translate(-4px, 4px) scale(1.1); filter: hue-rotate(90deg); }
-            40% { transform: translate(-4px, -4px) scale(1.1); filter: hue-rotate(180deg); }
-            60% { transform: translate(4px, 4px) scale(1.1); filter: hue-rotate(270deg); }
-            80% { transform: translate(4px, -4px) scale(1.1); filter: hue-rotate(360deg); }
-            100% { transform: translate(0) scale(1); filter: hue-rotate(0deg); }
-        }
-        .glitch-active { animation: glitch 0.15s infinite; color: var(--primary); opacity: 1; }
-
-        #scan-btn {
-            background: transparent; color: var(--secondary); border: 2px solid var(--secondary);
-            padding: 15px 40px; font-size: 1.2rem; border-radius: 50px; cursor: pointer;
-            text-transform: uppercase; font-weight: bold; letter-spacing: 2px; transition: 0.3s;
-        }
-
-        #scan-btn:hover { background: var(--secondary); color: #000; box-shadow: 0 0 30px var(--secondary); }
-
-        #scan-text {
-            margin-top: 15px; font-size: 1.5rem; color: var(--accent);
-            text-align: center; min-height: 30px; font-weight: bold; letter-spacing: 1px;
-        }
-
-        /* Terminál výstup */
-        #terminal-output {
-            font-family: 'Share Tech Mono', monospace;
-            color: var(--secondary); font-size: 0.95rem;
-            margin-top: 15px; width: 350px; height: 120px;
-            text-align: left; opacity: 0; transition: opacity 0.5s;
-            background: rgba(0,0,0,0.5); padding: 10px; border-radius: 10px;
-            border-left: 3px solid var(--secondary); overflow: hidden;
-        }
-        .terminal-line { margin-bottom: 5px; }
-        .text-red { color: var(--primary); font-weight: bold; text-shadow: 0 0 5px var(--primary); }
-        .text-green { color: var(--accent); font-weight: bold; text-shadow: 0 0 5px var(--accent); }
-
-        /* ----- HLAVNÍ WEB (Stejný jako předtím, pro zkrácení nechávám kostru, kopíruj celé) ----- */
-        #main-site { opacity: 0; visibility: hidden; transition: opacity 1.5s ease; }
-        .bg-glow { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(255,42,109,0.15) 0%, rgba(0,0,0,0) 70%); top: -100px; right: -100px; z-index: -1; border-radius: 50%; filter: blur(50px); }
-        .bg-glow-2 { position: absolute; width: 500px; height: 500px; background: radial-gradient(circle, rgba(5,217,232,0.1) 0%, rgba(0,0,0,0) 70%); bottom: 10%; left: -100px; z-index: -1; border-radius: 50%; filter: blur(50px); }
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 2rem 5%; backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border); }
-        .logo { font-size: 2rem; font-weight: 900; letter-spacing: 5px; background: linear-gradient(90deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero { min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 20px; }
-        .hero h1 { font-size: 6rem; margin-bottom: 10px; background: linear-gradient(to right, #fff, #888); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0px 10px 30px rgba(0,0,0,0.5); }
-        .hero p { font-size: 1.5rem; color: #aaa; max-width: 600px; margin-bottom: 40px; }
-        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; padding: 5rem 10%; }
-        .glass-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px; padding: 2.5rem; backdrop-filter: blur(15px); transition: transform 0.3s, box-shadow 0.3s; }
-        .glass-card:hover { transform: translateY(-10px); border-color: var(--secondary); box-shadow: 0 10px 30px rgba(5, 217, 232, 0.1); }
-        .glass-card h3 { color: var(--secondary); font-size: 1.8rem; margin-bottom: 1rem; }
-        .glass-card p { color: #ccc; line-height: 1.6; }
-        .tech-tag { display: inline-block; background: rgba(1, 255, 195, 0.1); color: var(--accent); padding: 5px 15px; border-radius: 50px; font-size: 0.8rem; margin-top: 15px; margin-right: 5px; border: 1px solid rgba(1, 255, 195, 0.3); }
-        .demo-section { text-align: center; padding: 5rem 20px; border-top: 1px solid var(--glass-border); }
-        .demo-section h2 { font-size: 3rem; margin-bottom: 2rem; }
-        .pulse-btn { background: linear-gradient(45deg, var(--primary), #b31046); color: white; border: none; padding: 20px 50px; font-size: 1.5rem; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 0 20px rgba(255, 42, 109, 0.5); transition: 0.3s; }
-        .pulse-btn:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(255, 42, 109, 0.8); }
-        .candy { position: fixed; border-radius: 50%; z-index: 999; box-shadow: inset -3px -3px 6px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.5); pointer-events: none; }
-        footer { text-align: center; padding: 2rem; color: #555; border-top: 1px solid var(--glass-border); }
-        @keyframes pulseAlert { 0% { text-shadow: 0 0 10px var(--primary); transform: scale(1); } 100% { text-shadow: 0 0 40px var(--primary), 0 0 80px red; transform: scale(1.05); } }
+        .demo-section { text-align: center; padding: 2rem 1rem 4rem; position: relative; z-index: 20; }
+        .pulse-btn { background: linear-gradient(45deg, var(--gold), #ff0055); color: white; border: 4px solid white; padding: 18px 45px; font-size: clamp(1.2rem, 6vw, 2.2rem); font-weight: 900; border-radius: 50px; cursor: pointer; box-shadow: 0 0 40px rgba(255, 215, 0, 0.7); transition: 0.1s; text-transform: uppercase; letter-spacing: 2px; animation: glitch 0.5s infinite alternate; outline: none;}
+        .pulse-btn:active { transform: scale(0.9) translateY(8px); box-shadow: 0 0 10px red; }
+        @media (max-width: 768px) { .pulse-btn { padding: 15px 35px; border-width: 3px;} }
+        
+        .candy { position: fixed; border-radius: 50%; z-index: 999; box-shadow: inset -2px -2px 5px rgba(0,0,0,0.5), 0 0 12px rgba(255,255,255,0.7); pointer-events: none; border: 1.5px solid rgba(255,255,255,0.5); }
+        footer { text-align: center; padding: 1.5rem 1rem; color: #fff; background: rgba(0,0,0,0.8); font-weight: bold; border-top: 1px solid var(--glass-border); backdrop-filter: blur(10px); font-size: 0.8rem; width: 100%;}
     </style>
 </head>
 <body>
@@ -168,42 +148,87 @@
     <audio id="sound-success" src="success.mp3" preload="auto"></audio>
     <audio id="bg-music" src="hudba.mp3" loop preload="auto"></audio>
 
+    <div class="insane-rainbow"></div>
+    <div class="stonks-bg"></div>
+    <div class="bouncing-hodl">HODL!!!</div>
+
+    <div class="flying-meme" data-emoji="🚀" style="--pos: 5vw; --speed: 2.5s; --delay: 0s; --spin-speed: 0.4s;"></div>
+    <div class="flying-meme" data-emoji="💎" style="--pos: 25vw; --speed: 4s; --delay: -1.5s; --spin-speed: 1.5s;"></div>
+    <div class="flying-meme" data-emoji="🦍" style="--pos: 45vw; --speed: 1.8s; --delay: -0.8s; --spin-speed: 0.15s;"></div>
+    <div class="flying-meme" data-emoji="📈" style="--pos: 65vw; --speed: 3.5s; --delay: -2.5s; --spin-speed: 0.9s;"></div>
+    <div class="flying-meme" data-emoji="🍬" style="--pos: 85vw; --speed: 2s; --delay: -0.3s; --spin-speed: 0.6s;"></div>
+    <div class="flying-meme" data-emoji="💸" style="--pos: 15vw; --speed: 5s; --delay: -3s; --spin-speed: 2.5s;"></div>
+    <div class="flying-meme" data-emoji="🐸" style="--pos: 75vw; --speed: 2.2s; --delay: -1.2s; --spin-speed: 0.3s;"></div>
+    <div class="flying-meme" data-emoji="🤡" style="--pos: 35vw; --speed: 3s; --delay: -2s; --spin-speed: 0.7s;"></div>
+    <div class="flying-meme" data-emoji="💩" style="--pos: 95vw; --speed: 2.8s; --delay: -0.5s; --spin-speed: 0.5s;"></div>
+
+    <div class="ticker-tape">
+        <div>
+            <span>🚀 BUY THE DIP 🚀</span>
+            <span>💎 DIAMOND HANDS 💎</span>
+            <span>🔥 BURNING ARDUINOS 🔥</span>
+            <span>🦍 APES TOGETHER STRONG 🦍</span>
+            <span>🍬 SUGAR YIELD: MAXIMAL 🍬</span>
+            <span>📈 JDLORA TO THE MOON 📈</span>
+            <span>🐸 PEPE APPROVED 🐸</span>
+            <span>💸 NO GAS FEES 💸</span>
+        </div>
+    </div>
+
     <div id="scanner-overlay">
         <div class="fingerprint-box" id="fp-box">
             <div class="scan-grid" id="scan-grid"></div>
-            <div class="fingerprint-icon" id="fp-icon">🧬</div>
+            <div class="fingerprint-icon" id="fp-icon">💎</div>
             <div class="scan-line" id="scan-line"></div>
         </div>
-        <button id="scan-btn" onclick="startScanner()">Zahájit biometrický test</button>
+        <button id="scan-btn" onclick="startScanner()">Zahájit Web3 Autorizaci</button>
         <div id="scan-text"></div>
-        
         <div id="terminal-output"></div>
+        
+        <div class="scanner-warnings">
+            <div class="sound-warning">🔈 ZAPNĚTE SI ZVUK PRO MAXIMÁLNÍ ZÁŽITEK</div>
+            <div class="epilepsy-warning">⚠️ VAROVÁNÍ: Tato stránka obsahuje blikající světla a extrémně rychlé animace.</div>
+        </div>
     </div>
 
     <div id="main-site">
-        <div class="bg-glow"></div>
-        <div class="bg-glow-2"></div>
-        <nav class="navbar"><div class="logo">JIDLORA</div><div>VERZE 1.0 // PROJEKT</div></nav>
+        <nav class="navbar">
+            <div class="logo">JIDLORA</div>
+            <div class="nav-links">
+                <a href="index.html" class="active">Terminál</a>
+                <a href="about.html">Roadmapa</a>
+                <a href="hardware.html">Specifikace</a>
+            </div>
+        </nav>
+
         <section class="hero">
+            <div class="badge">🔥 DAPP TERMINAL V1.0 [MAINNET] 🔥</div>
             <h1>JIDLORA</h1>
-            <p>Zcela autonomní, terénní nutriční jednotka. Navržena pro eliminaci kritického nedostatku cukru během vyučovacích hodin.</p>
+            <p>Decentralizovaný smart-kontrakt pro distribuci sacharidů. Ověřte svou biometrickou peněženku a začněte masivní ražbu tokenů.</p>
+            
+            <div class="stats-bar">
+                <div class="stat-box"><h4>TVL (Cukr)</h4><span>1.2 KG</span></div>
+                <div class="stat-box"><h4>Gas Fee</h4><span style="color: var(--gold);">0.00 JDL</span></div>
+                <div class="stat-box"><h4>Network</h4><span style="color: var(--primary);">PUMPING</span></div>
+                <div class="stat-box"><h4>Sugar APY</h4><span>69420%</span></div>
+            </div>
         </section>
-        <section class="features">
-            <div class="glass-card"><h3>🧠 Centrální Mozek</h3><p>O chod se stará mikrokontrolér <strong>ESP32</strong> s plně bezdrátovým ovládáním přes Wi-Fi a Bluetooth.</p><span class="tech-tag">ESP32 DevKit V1</span></div>
-            <div class="glass-card"><h3>⚙️ Pohon & Šasi</h3><p>Platforma postavena pro uvezní minimálně 1kg nákladu. Využívá <strong>4WD náhon</strong> pro maximální trakci v náročném školním terénu.</p><span class="tech-tag">4x 25GA-370</span><span class="tech-tag">L298N</span></div>
-            <div class="glass-card"><h3>🍬 Přesný Dispenser</h3><p>Mechanismus na míru z 3D tisku. O výdej se stará přesný krokový motor, zaručující nulovou ztrátovost bonbónů.</p><span class="tech-tag">Krokový motor 28BYJ-48</span></div>
-        </section>
+
         <section class="demo-section">
-            <h2>Simulace Systému Výdeje</h2>
-            <p style="color: #aaa; margin-bottom: 2rem;">Testovací rozhraní pro ověření fyziky padajících těles s vysokým obsahem sacharidů.</p>
-            <button class="pulse-btn" id="candyBtn" onclick="dispenseCandy()">VYDAT ENERGII</button>
+            <button class="pulse-btn" id="candyBtn" onclick="dispenseCandy()">MINT $SUGAR</button>
+            <p style="color: #fff; margin-top: 1.5rem; font-family: monospace; background: rgba(0,0,0,0.8); display: inline-block; padding: 8px; border-radius: 5px; font-size: 0.7rem;">* Kliknutím souhlasíte se spálením 0 kalorií a přijetím 100% cukrového výnosu do vašeho žaludku.</p>
         </section>
-        <footer>Vytvořeno pro záchranu životů (a jedničku z projektu) © 2067 JIDLORA Team.</footer>
+
+        <footer>Powered by Blockchain, Burnt Hardware & Meme Magic © 2067 JIDLORA DApp.</footer>
     </div>
 
     <script>
-        // --- LOGIKA 9-SEKUNDOVÉHO SKENERU ---
+        // --- LOGIKA KRYPTO SKENERU ---
         async function startScanner() {
+            // Zamezení vícenásobnému kliknutí
+            if (window.scannerStarted) return;
+            window.scannerStarted = true;
+
             const btn = document.getElementById('scan-btn');
             const scanLine = document.getElementById('scan-line');
             const scanText = document.getElementById('scan-text');
@@ -216,113 +241,135 @@
             const successSound = document.getElementById('sound-success');
             const bgMusic = document.getElementById('bg-music');
 
-            // Funkce pro přidávání řádků do terminálu
             function log(text) {
                 terminal.innerHTML += `<div class="terminal-line">${text}</div>`;
-                terminal.scrollTop = terminal.scrollHeight; // Auto-scroll dolů
+                terminal.scrollTop = terminal.scrollHeight;
             }
 
-            // START (Čas: 0s)
+            // START
             btn.style.display = 'none';
+            // Skryjeme varování po spuštění
+            document.querySelector('.scanner-warnings').style.display = 'none';
+
             scanGrid.style.opacity = '1';
-            scanLine.style.display = 'block';
-            scanLine.style.animation = 'scanNormal 1.5s infinite alternate linear';
-            terminal.style.opacity = '1';
             
-            try { scanSound.play(); } catch(e) {}
+            // ZAPNUTÍ LASEROVÉ ČÁRY
+            scanLine.style.opacity = '1';
+            scanLine.style.animation = 'scanNormal 1.5s infinite alternate linear';
+            
+            terminal.style.opacity = '1';
+            try { scanSound.play(); } catch(e) { console.log("Audio blockováno prohlížečem"); }
 
-            scanText.innerText = "INICIALIZACE...";
-            log("> Navazování spojení se subjektem...");
+            scanText.innerText = "PŘIPOJUJI PENĚŽENKU...";
+            log("> Navazování Web3 spojení se studentem...");
 
-            // FÁZE 1: Standardní sken (Čas: 1.5s)
+            // FÁZE 1
             setTimeout(() => {
-                scanText.innerText = "BIOMETRICKÁ ANALÝZA";
-                log("> Sken otisku prstu... <span class='text-green'>OK</span>");
-                log("> Měření tepové frekvence... 110 BPM");
+                scanText.innerText = "KONTROLA LIKVIDITY CUKRU";
+                log("> Sken biometrického klíče... <span class='text-green'>OK</span>");
+                log("> Měření hladiny glukózy... <span class='text-gold'>ZPRACOVÁVÁM</span>");
             }, 1500);
 
-            // FÁZE 2: Crazy / Glitch / Hloubkový sken (Čas: 3.5s)
+            // FÁZE 2 - Glitch
             setTimeout(() => {
-                scanText.innerText = "HLOUBKOVÝ SKEN KRVE";
+                scanText.innerText = "ANALÝZA SMART KONTRAKTU";
                 scanText.style.color = "var(--primary)";
-                fpIcon.classList.add('glitch-active'); // Zapne šílené klepání ikony
-                scanLine.style.animation = 'scanCrazy 0.2s infinite alternate linear'; // Rychlý laser
+                fpIcon.classList.add('glitch-active');
+                fpIcon.innerText = "🌀";
+                
+                // Restart a změna animace na crazy scan
+                scanLine.style.animation = 'none';
+                void scanLine.offsetWidth; // Nucený reflow
+                scanLine.style.animation = 'scanCrazy 0.2s infinite alternate linear';
+                
                 fpBox.style.borderColor = "var(--primary)";
                 fpBox.style.boxShadow = "0 0 50px rgba(255, 42, 109, 0.4)";
                 terminal.style.borderLeftColor = "var(--primary)";
                 
-                log("> Přistupuji k nervové soustavě...");
-                log("> Analyzuji trávicí trakt...");
+                log("> Přistupuji do blockchainu učebny...");
+                log("> Validace transakčních bloků...");
             }, 3500);
 
-            // FÁZE 3: Zjištění problému / Panika (Čas: 5.5s)
+            // FÁZE 3 - PANIKA
             setTimeout(() => {
-                scanText.innerText = "!! KRITICKÝ STAV !!";
+                scanText.innerText = "!! BEAR MARKET DETEKOVÁN !!";
                 scanText.style.animation = "pulseAlert 0.4s infinite alternate";
                 
-                log("> Hladina glukózy: <span class='text-red'>0.01% (SMRTELNÁ)</span>");
-                log("> <span class='text-red'>VAROVÁNÍ: Subjekt hrozí kolapsem z nudy!</span>");
+                log("> Hladina glukózy: <span class='text-red'>CRITICAL (RUG PULL)</span>");
+                log("> <span class='text-red'>VAROVÁNÍ: Subjekt je zlikvidován nudou!</span>");
             }, 5500);
 
-            // FÁZE 4: Záchrana / Autorizace (Čas: 7.5s)
+            // FÁZE 4 - ZÁCHRANA
             setTimeout(() => {
                 fpIcon.classList.remove('glitch-active');
-                scanLine.style.animation = 'scanNormal 0.5s forwards linear'; // Dojede dolů a zastaví
+                fpIcon.innerText = "💰";
+                
+                // Návrat do normálního režimu a zastavení dole
+                scanLine.style.animation = 'none';
+                void scanLine.offsetWidth; // Nucený reflow
+                scanLine.style.animation = 'scanNormal 0.5s forwards linear';
                 
                 scanText.style.animation = "none";
                 scanText.style.color = "var(--accent)";
-                scanText.innerText = "HLADOVÝ UŽIVATEL POTVRZEN";
+                scanText.innerText = "MINTING TRANSAKCE SCHVÁLENA";
                 
                 fpBox.style.borderColor = "var(--accent)";
                 fpBox.style.boxShadow = "0 0 40px rgba(1, 255, 195, 0.3)";
                 fpIcon.style.color = "var(--accent)";
                 terminal.style.borderLeftColor = "var(--accent)";
                 
-                log("> Spouštím záchranný protokol JIDLORA...");
-                log("> <span class='text-green'>PŘÍSTUP POVOLEN.</span>");
+                log("> Spouštím airdrop protokol JIDLORA...");
+                log("> <span class='text-gold'>ZÁCHRANNÝ FOND ODEMČEN. UN_REKT.</span>");
 
                 try { scanSound.pause(); successSound.play(); } catch(e) {}
             }, 7500);
 
-            // ZÁVĚR: Přechod na hlavní web (Čas: 9.0s) -> 1.5s po autorizaci
+            // ZÁVĚR
             setTimeout(() => {
                 document.getElementById('scanner-overlay').style.opacity = '0';
-                
                 setTimeout(() => {
                     document.getElementById('scanner-overlay').style.display = 'none';
                     document.getElementById('main-site').style.visibility = 'visible';
                     document.getElementById('main-site').style.opacity = '1';
                     try { bgMusic.play(); } catch(e) {}
-                }, 1000); // čeká na dokreslení fade-outu
-            }, 9000); // TADY JE TĚCH PŘESNÝCH 9 SEKUND
+                }, 1000);
+            }, 9000);
         }
 
-        // --- FYZIKA BONBÓNŮ (DISPENSER DEMO) ---
-        const colors = ['#e60000', '#ff8c00', '#ffee00', '#00c800', '#0000ff', '#800080'];
+        // --- INSANE KRYPTO-BONBÓNOVÁ FYZIKA (OPTIMALIZOVÁNO PRO MOBIL) ---
+        const colors = ['#ffd700', '#ff2a6d', '#05d9e8', '#01ffc3', '#ff00ff', '#ffffff'];
         let candies = [];
+        let isMobile = window.innerWidth <= 768;
 
         function dispenseCandy() {
             const btn = document.getElementById('candyBtn');
-            btn.innerText = "DÁVKUJI...";
-            setTimeout(() => btn.innerText = "VYDAT ENERGII", 1000);
-            for(let i = 0; i < 50; i++) { setTimeout(createCandy, i * 15); }
+            btn.innerText = "MINTING...";
+            // Rychlý feedback
+            setTimeout(() => { btn.innerText = "MINT $SUGAR"; }, 1000);
+            
+            // Na mobilu méně bonbónů, ať to nespadne
+            let count = isMobile ? 30 : 60;
+            for(let i = 0; i < count; i++) { setTimeout(createCandy, i * (isMobile ? 25 : 15)); }
         }
 
         function createCandy() {
             const candy = document.createElement('div');
             candy.className = 'candy';
             const color = colors[Math.floor(Math.random() * colors.length)];
-            const size = Math.random() * 15 + 15; 
+            // Menší na mobilu
+            const size = isMobile ? (Math.random() * 15 + 15) : (Math.random() * 20 + 20); 
             candy.style.backgroundColor = color;
             candy.style.width = size + 'px'; candy.style.height = size + 'px';
             
+            candy.innerHTML = `<div style="color: black; font-weight: 900; text-align: center; line-height: ${size}px; font-size: ${size/2}px; opacity: 0.7;">$</div>`;
+            
             const phys = {
                 element: candy,
-                x: window.innerWidth / 2 + (Math.random() * 100 - 50),
+                x: window.innerWidth / 2 + (Math.random() * (isMobile ? 50 : 100) - (isMobile ? 25 : 50)),
                 y: window.scrollY - 50,
-                vx: Math.random() * 16 - 8,
+                vx: Math.random() * (isMobile ? 12 : 20) - (isMobile ? 6 : 10),
                 vy: Math.random() * 5,
-                gravity: 0.6,
+                gravity: isMobile ? 0.6 : 0.8,
                 bounce: 0.5 + Math.random() * 0.3,
                 size: size
             };
@@ -332,24 +379,42 @@
         }
 
         function updatePhysics() {
+            let scrollY = window.scrollY;
+            let innerHeight = window.innerHeight;
+            let innerWidth = window.innerWidth;
+
             for (let i = 0; i < candies.length; i++) {
                 let p = candies[i];
                 p.vy += p.gravity; p.x += p.vx; p.y += p.vy;
-                const ground = window.innerHeight + window.scrollY - p.size;
+                
+                const ground = innerHeight + scrollY - p.size;
+                const wall = innerWidth - p.size;
+
+                // Odraz ode země
                 if (p.y > ground) { p.y = ground; p.vy *= -p.bounce; p.vx *= 0.8; }
+                // Odraz od stěn
                 if (p.x < 0) { p.x = 0; p.vx *= -1; } 
-                else if (p.x > window.innerWidth - p.size) { p.x = window.innerWidth - p.size; p.vx *= -1; }
+                else if (p.x > wall) { p.x = wall; p.vx *= -1; }
+                
                 p.element.style.left = p.x + 'px'; p.element.style.top = p.y + 'px';
             }
+            // Čištění bonbónů, co se zastavily
             candies = candies.filter(p => {
-                if(Math.abs(p.vy) < 0.5 && p.y >= window.innerHeight + window.scrollY - p.size - 2) {
-                    setTimeout(() => { if(p.element.parentNode) p.element.remove(); }, 3000);
+                if(Math.abs(p.vy) < 0.5 && p.y >= innerHeight + scrollY - p.size - 5) {
+                    setTimeout(() => { if(p.element.parentNode) p.element.remove(); }, 2000);
                     return false;
                 } return true;
             });
             requestAnimationFrame(updatePhysics);
         }
+        
+        // Spustit fyziku
         updatePhysics();
+
+        // Mobile fix pro resize
+        window.addEventListener('resize', () => {
+            isMobile = window.innerWidth <= 768;
+        });
     </script>
 </body>
 </html>

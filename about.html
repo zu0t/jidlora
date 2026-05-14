@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JIDLORA | The Future of Sugar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --bg-dark: #0a0a0c; 
+            --primary: #ff2a6d; 
+            --secondary: #05d9e8; 
+            --accent: #01ffc3; 
+            --gold: #ffd700;
+            --glass-bg: rgba(20, 20, 25, 0.6); 
+            --glass-border: rgba(255, 255, 255, 0.1); 
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+        body { background-color: var(--bg-dark); color: white; overflow-x: hidden; }
+
+        /* ─── ZBYTEČNÉ CRYPTO ANIMACE ─── */
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes float { 0% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(2deg); } 100% { transform: translateY(0px) rotate(0deg); } }
+        @keyframes pulseGlow { 0% { box-shadow: 0 0 20px var(--primary); } 50% { box-shadow: 0 0 60px var(--secondary), inset 0 0 20px var(--secondary); } 100% { box-shadow: 0 0 20px var(--primary); } }
+        @keyframes spinSlow { 100% { transform: rotate(360deg); } }
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+        /* Pozadí a Ticker */
+        .animated-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(-45deg, #0a0a0c, #1a0b1c, #0b1c1c, #0a0a0c); background-size: 400% 400%; animation: gradientShift 15s ease infinite; z-index: -2; }
+        .grid-overlay { position: fixed; width: 100vw; height: 100vh; background: linear-gradient(transparent 95%, rgba(5, 217, 232, 0.05) 100%), linear-gradient(90deg, transparent 95%, rgba(5, 217, 232, 0.05) 100%); background-size: 40px 40px; z-index: -1; transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px); animation: float 10s infinite alternate; }
+        
+        .ticker-tape { background: var(--primary); color: white; font-weight: 900; font-size: 0.9rem; padding: 5px 0; overflow: hidden; white-space: nowrap; border-bottom: 2px solid var(--gold); }
+        .ticker-tape div { display: inline-block; animation: marquee 20s linear infinite; }
+        .ticker-tape span { margin-right: 50px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+
+        /* Navigace */
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 5%; backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 2.2rem; font-weight: 900; letter-spacing: 5px; background: linear-gradient(90deg, var(--gold), var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradientShift 3s infinite; background-size: 200%; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { color: white; text-decoration: none; font-weight: bold; letter-spacing: 2px; transition: 0.3s; text-transform: uppercase; font-size: 0.9rem; padding: 8px 15px; border-radius: 8px; border: 1px solid transparent; }
+        .nav-links a:hover, .nav-links a.active { border-color: var(--secondary); background: rgba(5, 217, 232, 0.1); color: var(--secondary); text-shadow: 0 0 10px var(--secondary); box-shadow: 0 0 15px rgba(5,217,232,0.2); }
+
+        /* Hlavní sekce */
+        .hero-crypto { text-align: center; padding: 6rem 20px 3rem; }
+        .badge { display: inline-block; background: rgba(255, 215, 0, 0.1); color: var(--gold); border: 1px solid var(--gold); padding: 5px 15px; border-radius: 50px; font-weight: bold; font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 1rem; animation: pulseGlow 2s infinite; }
+        .hero-crypto h1 { font-size: 5rem; margin-bottom: 1rem; line-height: 1.1; text-transform: uppercase; text-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .hero-crypto .gradient-text { background: linear-gradient(to right, var(--secondary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .connect-wallet-btn { margin-top: 2rem; background: transparent; color: white; border: 2px solid var(--primary); padding: 15px 40px; font-size: 1.2rem; font-weight: 900; border-radius: 50px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; position: relative; overflow: hidden; animation: float 4s ease-in-out infinite; }
+        .connect-wallet-btn:hover { background: var(--primary); box-shadow: 0 0 40px var(--primary); transform: scale(1.05); }
+
+        /* Roadmapa utrpení (Karty) */
+        .roadmap-section { padding: 4rem 10%; max-width: 1200px; margin: auto; }
+        .section-title { text-align: center; font-size: 3rem; margin-bottom: 3rem; color: var(--secondary); }
+        
+        .crypto-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .crypto-card { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 2.5rem; border-radius: 20px; backdrop-filter: blur(15px); transition: 0.4s; position: relative; overflow: hidden; }
+        .crypto-card::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.05), transparent); transform: rotate(45deg); transition: 0.5s; opacity: 0; }
+        .crypto-card:hover::after { opacity: 1; left: 100%; }
+        .crypto-card:hover { transform: translateY(-10px) scale(1.02); border-color: var(--primary); box-shadow: 0 20px 40px rgba(255, 42, 109, 0.2); z-index: 10; }
+        
+        .card-icon { font-size: 3rem; margin-bottom: 1rem; display: inline-block; animation: float 3s infinite alternate; }
+        .crypto-card h3 { font-size: 1.8rem; margin-bottom: 1rem; color: white; }
+        .crypto-card p { color: #aaa; line-height: 1.6; }
+        .loss-stat { display: inline-block; margin-top: 15px; padding: 5px 10px; background: rgba(255, 42, 109, 0.2); color: var(--primary); border-radius: 5px; font-family: monospace; font-weight: bold; border: 1px solid var(--primary); }
+
+        /* Levitující 3D prvek v pozadí */
+        .floating-cube { position: fixed; top: 30%; right: 5%; width: 150px; height: 150px; border: 2px solid var(--secondary); border-radius: 20px; animation: spinSlow 15s linear infinite; opacity: 0.2; z-index: -1; box-shadow: inset 0 0 50px var(--secondary); }
+        .floating-cube2 { position: fixed; bottom: 10%; left: 5%; width: 100px; height: 100px; border: 2px solid var(--primary); border-radius: 50%; animation: spinSlow 10s linear infinite reverse; opacity: 0.2; z-index: -1; }
+
+        footer { text-align: center; padding: 2rem; color: #555; border-top: 1px solid var(--glass-border); margin-top: 5rem; backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    <div class="grid-overlay"></div>
+    <div class="floating-cube"></div>
+    <div class="floating-cube2"></div>
+
+    <div class="ticker-tape">
+        <div>
+            <span>🚀 JDLORA COIN (JDL) +420.69%</span>
+            <span>🔥 HARDWARE BURN RATE: EXTREME</span>
+            <span>💀 ARDUINOS DESTROYED: 2</span>
+            <span>💥 ESP32 CASUALTIES: 1</span>
+            <span>🍬 SUGAR YIELD: MAXIMAL</span>
+            <span>💎 HODL YOUR CANDIES</span>
+            <span>🚀 JDLORA COIN (JDL) +420.69%</span>
+            <span>🔥 HARDWARE BURN RATE: EXTREME</span>
+            <span>💀 ARDUINOS DESTROYED: 2</span>
+            <span>💥 ESP32 CASUALTIES: 1</span>
+        </div>
+    </div>
+
+    <nav class="navbar">
+        <div class="logo">JIDLORA</div>
+        <div class="nav-links">
+            <a href="index.html">Terminál</a>
+            <a href="about.html" class="active">Roadmapa</a>
+            <a href="hardware.html">Specifikace</a>
+        </div>
+    </nav>
+
+    <section class="hero-crypto">
+        <div class="badge">V1.0 MAINNET LIVE</div>
+        <h1>Disrupting <br><span class="gradient-text">Nutrient Delivery</span></h1>
+        <p style="color: #aaa; font-size: 1.2rem; max-width: 600px; margin: 0 auto;">Decentralizovaný autonomní systém pro záchranu životů uprostřed nudných vyučovacích hodin. Powered by blood, sweat & burnt silicon.</p>
+        <button class="connect-wallet-btn" onclick="alert('ERROR: Peněženka nalezena, ale žaludek je prázdný. Připojte Jidloru.')">CONNECT STOMACH</button>
+    </section>
+
+    <section class="roadmap-section">
+        <h2 class="section-title">Roadmapa Utrpení</h2>
+        <div class="crypto-grid">
+            
+            <div class="crypto-card">
+                <div class="card-icon">🔥</div>
+                <h3>Phase 1: Proof of Burn</h3>
+                <p>Každý revoluční projekt vyžaduje oběti. Během rané fáze vývoje jsme doslova usmažili <b>dvě Arduina a jedno ESP32</b>. Z desek se zakouřilo, čipy odešly do křemíkového nebe, ale my jsme se nevzdali. Říkáme tomu agresivní stres-testování.</p>
+                <div class="loss-stat">NET LOSS: -3 BOARDS</div>
+            </div>
+
+            <div class="crypto-card">
+                <div class="card-icon">🎭</div>
+                <h3>Phase 2: The GPIO Deception</h3>
+                <p>Zrada přišla zevnitř. Zjistili jsme, že naše deska Wemos D1 R32 funguje jako dvojitý agent – vypadá jako Arduino Uno, ale její piny lžou. Když jsme se pokusili ovládat Pin 9, procesor poslal proud do vlastní paměti a podřízl si mozek. Museli jsme implementovat šifrovaný překladový slovník.</p>
+                <div class="loss-stat">STATUS: HACKED THE MATRIX</div>
+            </div>
+
+            <div class="crypto-card">
+                <div class="card-icon">🔄</div>
+                <h3>Phase 3: The Infinite Loop</h3>
+                <p>Chtěli jsme jen vyklopit bonbón. Zjistili jsme ale, že jsme omylem nasadili 360° kontinuální servomotor. Místo zastavení se začal točit jako šílený mixér rychlostí světla. Vyřešeno naprogramováním "Smart Kontraktu", který ho precizně zastaví na milisekundu přesně.</p>
+                <div class="loss-stat">BUG: FIXED (IT'S A FEATURE NOW)</div>
+            </div>
+
+            <div class="crypto-card">
+                <div class="card-icon">🍬</div>
+                <h3>Phase 4: Mass Adoption</h3>
+                <p>Hardware je stabilizován (zatím nic nehoří). Bluetooth spojení běží na privátní frekvenci. Jidlora je připravena narušit monopol školních bufetů a doručovat dávky energie přímo pod lavice. Budoucnost je sladká.</p>
+                <div class="loss-stat">TARGET: 100% SUGAR APY</div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer>Powered by Burnt Hardware & Hopium © 2067 JIDLORA Team.</footer>
+
+</body>
+</html>
